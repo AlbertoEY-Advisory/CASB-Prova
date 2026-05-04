@@ -1,0 +1,168 @@
+name: Convert Policy YAML to Markdown
+
+permissions:
+  contents: write
+
+on:
+  push:
+    paths:
+      - "vendors/**/*.yaml"
+      - "vendors/**/*.yml"
+      - "use-cases/**/*.yaml"
+      - "use-cases/**/*.yml"
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find YAML changes (added, modified, deleted)
+        id: changed
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          echo "🔎 Checking diff between $BEFORE and $AFTER"
+
+          # Capture diff including deletions
+          CHANGED=$(git diff --name-status "$BEFORE" "$AFTER" -- \
+            'vendors/**/*.yml' 'vendors/**/*.yaml' \
+            'use-cases/**/*.yml' 'use-cases/**/*.yaml' || true)
+
+          if [ -z "$CHANGED" ]; then
+            echo "⚠ No YAML changes found."
+            echo "has-files=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "📄 Raw diff:"
+          echo "$CHANGED"
+
+          FILES_TO_CONVERT=""
+          FILES_TO_DELETE=""
+
+          # Parse changes
+          while read -r status file; do
+            [ -z "$file" ] && continue
+            case "$status" in
+              A|M)
+                FILES_TO_CONVERT+="$file"$'\n'
+                ;;
+              D)
+                FILES_TO_DELETE+="$file"$'\n'
+                ;;
+            esac
+          done <<< "$CHANGED"
+
+          echo "has-files=true" >> $GITHUB_OUTPUT
+
+          {
+            echo "convert<<EOF"
+            echo "$FILES_TO_CONVERT"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "delete<<EOF"
+            echo "$FILES_TO_DELETE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        if: steps.changed.outputs.has-files == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install required dependencies
+        if: steps.changed.outputs.has-files == 'true'
+        run: |
+          npm init -y --silent
+          npm install js-yaml@4.1.0 --silent
+
+      - name: Convert YAML to Markdown
+        if: steps.changed.outputs.has-files == 'true'
+        id: convert
+        run: |
+          readarray -t FILES <<< "${{ steps.changed.outputs.convert }}"
+          OUT_FILES=""
+
+          for INPUT in "${FILES[@]}"; do
+            [ -z "$INPUT" ] && continue
+
+            OUTPUT="docs/${INPUT%.*}.md"
+            mkdir -p "$(dirname "$OUTPUT")"
+
+            echo "➡ Converting: $INPUT → $OUTPUT"
+            node tools/converters/MD-converter.js "$INPUT" "$OUTPUT"
+
+            OUT_FILES+="$OUTPUT"$'\n'
+          done
+
+          {
+            echo "outputs<<EOF"
+            echo "$OUT_FILES"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Delete Markdown for removed YAML files
+        if: steps.changed.outputs.has-files == 'true'
+        id: delete
+        run: |
+          readarray -t DELETED <<< "${{ steps.changed.outputs.delete }}"
+          DELETE_OUT=""
+
+          for INPUT in "${DELETED[@]}"; do
+            [ -z "$INPUT" ] && continue
+
+            TARGET="docs/${INPUT%.*}.md"
+
+            if [ -f "$TARGET" ]; then
+              echo "🗑 Deleting $TARGET"
+              rm "$TARGET"
+              DELETE_OUT+="$TARGET"$'\n'
+            else
+              echo "⚠ No MD file found for deleted YAML: $TARGET"
+            fi
+          done
+
+          {
+            echo "deleted_md<<EOF"
+            echo "$DELETE_OUT"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.changed.outputs.has-files == 'true'
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+
+          # Converted files
+          readarray -t NEW_MD <<< "${{ steps.convert.outputs.outputs }}"
+          # Deleted files
+          readarray -t DEL_MD <<< "${{ steps.delete.outputs.deleted_md }}"
+
+          FILES=()
+
+          for f in "${NEW_MD[@]}"; do
+            [ -n "$f" ] && FILES+=("$f")
+          done
+
+          for f in "${DEL_MD[@]}"; do
+            [ -n "$f" ] && FILES+=("$f")
+          done
+
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "⚠ Nothing to commit."
+            exit 0
+          fi
+
+          git add "${FILES[@]}"
+          git commit -m "Updated Markdown from YAML changes (add/modify/delete)" || echo "No changes to commit"
+          git push || echo "⚠ git push failed (protected branch or other issue)."
