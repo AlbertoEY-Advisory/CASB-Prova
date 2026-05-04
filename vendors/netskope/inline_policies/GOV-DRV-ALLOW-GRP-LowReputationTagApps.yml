@@ -1,0 +1,72 @@
+policy:
+  name: "GOV-DRV-ALLOW-GRP-LowReputationTagApps"
+
+  description: #Mandatory fields for inline policy documentation.
+    purpose: "Allow policy for low reputation Cloud-Storage Apps blocking rules"
+    context: "Have an exception process for the low reputation Cloud-Storage Apps blocking rules"
+    behavior: "Allow"
+    version: "1.0"
+    owner: "CISO/DCP Team"
+    source: "Stellantis CISO policy"
+
+  naming_breakdown: #Mandatory fields for inline policy documentation.
+    category: "GOV"
+    application: "DRV"
+    action: "ALLOW"
+    scope: "group"
+    tags: ""
+    title: "LowReputationTagApps"
+
+  enforcement_logic: #Maybe adaptable to other solutions
+    trigger: "Access to an App that have the -DerogLowReputation- netskope tag"
+    condition: "The user has the access service ZSSJ.CASBBlockLowRepEx with the ExceptionLowCloudStorage valorisation"
+    exceptions:
+    primary_action: "ALLOW"
+    secondary_action: null
+    logging: "Classic logging by Netskope"
+
+  audit_and_monitoring: #Maybe adaptable to other solutions
+    logs: "Default alert logs."
+    reports: "TODO"
+    review: "CISO/DCP"
+
+  related_policies: #Optional but reccommended
+    - "GOV-DRV-ALLOW-GRP-LowReputationTagApps"     
+    - "GOV-DRV-COACHBLOCK-ALL-LowReputationApps"
+    - "GOV-DRV-BLOCK-ALL-LowReputationApps"
+
+  last_json_export: |
+    {
+        "ruleName": "GOV-DRV-ALLOW-GRP-LowReputationTagApps",
+        "user": "ZSSJ.CASB.ExceptionLowCloudStorage ",
+        "sourceIP": "Any",
+        "srcCountry": "Any",
+        "browser": "Any",
+        "accessMethod": "Any",
+        "deviceClassification": "Any",
+        "application": "FSES-CloudStorage-Category",
+        "activity": "Any",
+        "ccl": "Poor, Unknown, Low",
+        "dstCountry": "Any",
+        "profile": "None",
+        "action": "Allow",
+        "alerts": "0",
+        "lastEdit": "Created Dec 15 2025 4:57 PM by stephane.lalmanach@stellantis.com",
+        "status": "Enabled (Pending Changes)",
+        "sourceIPEgress": "Any",
+        "uci": "None",
+        "app_tags": "Deroglowreputation",
+        "groupOrder": "12",
+        "groupName": "CASB - Stellantis",
+        "osFamily": "Any"
+    }
+
+  notes:
+    1/3 related_policies
+    1 to Allow specific people to access few Apps (this one)
+    1 to Coach the App will be blocked (temporary policy)
+    1 to Block
+  history: []
+
+  usecases_link:
+    - "UC-CASB-02-BlockLowRepByCateg"

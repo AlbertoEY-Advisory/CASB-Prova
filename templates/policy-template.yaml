@@ -1,0 +1,65 @@
+policy:
+  name: "<CATEGORY>-<APP>-<ACTION>-<SCOPE><TAGS>-<TITLE>"
+
+  optional_tags:
+    tagName: "TODO: tagValue"
+
+  description:
+    purpose: "TODO: Brief explanation of the policy's intent."
+    context: "TODO: Why this policy is needed (regulatory requirement, security risk, internal guideline, etc.)."
+    behavior: "TODO: What happens when the policy is triggered (block, alert, notify, etc.)."
+    version: "TODO: Current version (e.g., v1.0)."
+    owner: "TODO: Department or person responsible."
+    source: "TODO: Origin of requirement (e.g., GDPR, ISO 27001, internal audit)."
+
+  enforcement_logic:
+    trigger: "TODO: What activity triggers the policy."
+    condition: "TODO: User group, region, application, or data type."
+    exceptions: "TODO: List exceptions to the policy."
+    primary_action: "TODO: Main enforcement (block, alert, encrypt, etc.)."
+    secondary_action: "TODO: Optional actions (notifications, justifications, overrides)."
+    logging: "TODO: What information is logged."
+
+  audit_and_monitoring:
+    logs: "TODO: What is captured in CASB logs."
+    reports: "TODO: Frequency of reporting (daily, weekly, monthly)."
+    review: "TODO: Responsible team for reviewing the policy."
+
+  related_policies:
+    - name: "<TODO: POLICY_NAME>"
+      description: "TODO: Short description."
+    - name: "<TODO: POLICY_NAME>"
+      description: "TODO: Short description."
+
+  last_json_export: |
+    {
+        ruleName: "xxxxxxx"
+        user: "All"
+        sourceIP: "Any"
+        srcCountry: "Any"
+        os: "Any"
+        browser: "Any"
+        accessMethod: "Any"
+        deviceClassification: "Any"
+        application: "Microsoft Teams:Stellantis-teams"
+        activity: "Post"
+        ccl: "Any"
+        dstCountry: "Any"
+        profile: "DLP-PCI-Stellantis"
+        action: "Alert"
+        alerts: "0"
+        lastEdit: "Disabled Jul 30 2024 12:11 PM by xxxx@netskope.com"
+        status: "Disabled"
+        sourceIPEgress: "Any"
+        uci: "None"
+        app_tags: "Any"
+        groupOrder: "8"
+        groupName: "CASB [DLP - Apps - App Tags - App Instances]"
+    }
+
+  notes:
+    - "Versioning is managed in Git history but referenced here for clarity."
+    - "Deprecated policies must be prefixed with DEPRECATED_."
+  
+  usecases_link:
+    - "TODO: link a specific use case"

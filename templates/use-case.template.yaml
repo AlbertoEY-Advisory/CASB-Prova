@@ -1,0 +1,9 @@
+useCaseId: UC-EMAIL-01
+title: "Email Exfiltration to External Domains"
+description: >
+  Short rational and context for the use case.
+dataTypes:
+  - PII
+  - Confidential
+impactArea: "Email"
+notes: []

@@ -1,0 +1,17 @@
+metadata:
+  vendor: microsoft            # or netskope
+  product: purview-dlp         # or inline-protection, etc.
+  policyId: microsoft:purview-dlp:email-exfiltration-block
+  displayName: "Email Exfiltration Block"
+  status: active               # active / disabled
+  owner: "team-email@company.com"
+  managerApprover: "manager-sec@company.com"
+
+useCases:
+  - UC-EMAIL-01
+
+description: >
+  Short explanation of what the policy does and why.
+
+rollbackPlan: >
+  Steps to revert or disable this policy if it causes issues.

@@ -1,0 +1,132 @@
+{
+  "kind": "policy",
+  "rootKey": "policy",
+
+  "requiredPaths": [
+    "policy.name",
+    "policy.description.purpose",
+    "policy.description.context",
+    "policy.description.behavior",
+    "policy.description.version",
+    "policy.description.owner",
+    "policy.description.source",
+    "policy.naming_breakdown.category",
+    "policy.naming_breakdown.application",
+    "policy.naming_breakdown.action",
+    "policy.naming_breakdown.scope",
+    "policy.naming_breakdown.title"
+  ],
+
+  "sections": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "CASB Policy Documentation"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Policy Name"
+    },
+    {
+      "type": "field",
+      "path": "policy.name",
+      "fallback": ""
+    },
+
+    { "type": "separator" },
+
+    {
+      "type": "kv-list",
+      "title": "Description",
+      "items": [
+        { "label": "Purpose", "path": "policy.description.purpose" },
+        { "label": "Context", "path": "policy.description.context" },
+        { "label": "Behavior", "path": "policy.description.behavior" },
+        { "label": "Version", "path": "policy.description.version" },
+        { "label": "Owner", "path": "policy.description.owner" },
+        { "label": "Source", "path": "policy.description.source" }
+      ]
+    },
+
+    { "type": "separator" },
+
+    {
+      "type": "kv-list",
+      "title": "Naming Breakdown",
+      "items": [
+        { "label": "Category", "path": "policy.naming_breakdown.category" },
+        { "label": "Application", "path": "policy.naming_breakdown.application" },
+        { "label": "Action", "path": "policy.naming_breakdown.action" },
+        { "label": "Scope", "path": "policy.naming_breakdown.scope" },
+        { "label": "Tags", "path": "policy.naming_breakdown.tags" },
+        { "label": "Title", "path": "policy.naming_breakdown.title" }
+      ]
+    },
+
+    { "type": "separator" },
+
+    {
+      "type": "kv-list",
+      "title": "Enforcement Logic",
+      "items": [
+        { "label": "Trigger", "path": "policy.enforcement_logic.trigger" },
+        { "label": "Condition", "path": "policy.enforcement_logic.condition" },
+        { "label": "Exceptions", "path": "policy.enforcement_logic.exceptions" },
+        { "label": "Primary Action", "path": "policy.enforcement_logic.primary_action" },
+        { "label": "Secondary Action", "path": "policy.enforcement_logic.secondary_action" },
+        { "label": "Logging", "path": "policy.enforcement_logic.logging" }
+      ]
+    },
+
+    { "type": "separator" },
+
+    {
+      "type": "kv-list",
+      "title": "Audit & Monitoring",
+      "items": [
+        { "label": "Logs", "path": "policy.audit_and_monitoring.logs" },
+        { "label": "Reports", "path": "policy.audit_and_monitoring.reports" },
+        { "label": "Review", "path": "policy.audit_and_monitoring.review" }
+      ]
+    },
+
+    { "type": "separator" },
+
+    {
+      "type": "list",
+      "title": "Related Policies",
+      "path": "policy.related_policies",
+      "emptyText": "_None_"
+    },
+
+    {
+      "type": "list",
+      "title": "Use Cases / Links",
+      "path": "policy.usecases_link",
+      "emptyText": "_None_"
+    },
+
+    {
+      "type": "codeblock",
+      "title": "Last JSON export",
+      "language": "json",
+      "path": "policy.last_json_export",
+      "emptyText": ""
+    },
+
+    {
+      "type": "list",
+      "title": "Notes",
+      "path": "policy.notes",
+      "emptyText": "_None_"
+    },
+
+    {
+      "type": "list",
+      "title": "History",
+      "path": "policy.history",
+      "emptyText": "_None_"
+    }
+  ]
+}
